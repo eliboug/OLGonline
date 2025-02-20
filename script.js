@@ -1,63 +1,96 @@
-const CORRECT_SEQUENCE = ["c", "c", "g", "g", "a", "a", "g", "f", "e", "d", "c"];
-const noteToMidi = {
-    "c": 60, "d": 62, "e": 64, "f": 65, "g": 67, "a": 69, "b": 71
-};
+/* General Styling */
+* {
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
 
-document.getElementById("playButton").addEventListener("click", () => {
-    const inputs = document.querySelectorAll(".note-field");
-    let userNotes = Array.from(inputs).map(input => input.value.trim().toLowerCase());
-    
-    let isCorrect = true;
-    for (let i = 0; i < CORRECT_SEQUENCE.length; i++) {
-        if (userNotes[i] !== CORRECT_SEQUENCE[i]) {
-            isCorrect = false;
-            break;
-        }
-    }
-    
-    playNotes(userNotes);
+body {
+    background: linear-gradient(135deg, #1E1E2E, #252541);
+    color: #E3E3E3;
+    text-align: center;
+    padding: 20px;
+}
 
-    const message = document.getElementById("message");
-    if (isCorrect) {
-        message.innerHTML = "🎉 <strong>Congratulations! That is the correct answer!</strong> <br>" +
-            "Elius is stirring and slowly opens his eyes... <br>" +
-            "He reaches down into the river with his giant hand and saves Galliae! <br>" +
-            "You complete your tour of the factory and are presented the golden key to the gates of the factory for life.";
-        message.style.color = "green";
-    } else {
-        message.textContent = "❌ Incorrect answer!";
-        message.style.color = "red";
-        inputs.forEach(input => input.value = ""); // Clear input fields
-    }
-});
+/* Container */
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    margin: auto;
+    backdrop-filter: blur(10px);
+}
 
-async function playNotes(notes) {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    for (let i = 0; i < notes.length; i++) {
-        let note = notes[i];
+h1 {
+    font-size: 26px;
+    color: #FFD700;
+    margin-bottom: 10px;
+}
 
-        if (noteToMidi[note]) {
-            let osc = audioCtx.createOscillator();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(
-                440 * Math.pow(2, (noteToMidi[note] - 69) / 12), 
-                audioCtx.currentTime
-            );
-            osc.connect(audioCtx.destination);
-            osc.start();
+p {
+    font-size: 16px;
+    color: #A0A0A0;
+}
 
-            // First 6 notes: quarter notes (500ms), Last 5 notes: half notes (1000ms)
-            let duration = i >= 6 ? 1000 : 500; 
-            
-            await new Promise(resolve => setTimeout(() => {
-                osc.stop();
-                resolve();
-            }, duration));
+/* Input Fields */
+#noteInputs {
+    margin: 20px 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+}
 
-            await new Promise(resolve => setTimeout(resolve, 100)); // Pause between notes
-        } else {
-            await new Promise(resolve => setTimeout(resolve, 600)); // Skip invalid notes
-        }
-    }
+.note-field {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    background: #33334D;
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.note-field:focus {
+    background: #45456B;
+}
+
+/* Play Button */
+button {
+    background-color: #FFD700;
+    color: #1E1E2E;
+    border: none;
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #FFC107;
+    transform: scale(1.05);
+}
+
+/* Message Styling */
+#message {
+    font-size: 18px;
+    margin-top: 15px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.success {
+    color: #00FF00;
+}
+
+.error {
+    color: #FF4C4C;
 }
