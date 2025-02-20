@@ -1,59 +1,52 @@
-const CORRECT_SEQUENCE = ["c", "c", "g", "g", "a", "a", "g", "f", "e", "d", "c"];
-const noteToMidi = {
-    "c": 60, "d": 62, "e": 64, "f": 65, "g": 67, "a": 69, "b": 71
-};
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ECF0F1, #BDC3C7);
+    text-align: center;
+    padding: 20px;
+}
 
-document.getElementById("playButton").addEventListener("click", () => {
-    const inputs = document.querySelectorAll(".note-field");
-    let userNotes = Array.from(inputs).map(input => input.value.trim().toLowerCase());
-    
-    let isCorrect = userNotes.length === CORRECT_SEQUENCE.length && userNotes.every((note, i) => note === CORRECT_SEQUENCE[i]);
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: auto;
+}
 
-    playNotes(userNotes);
+h1 {
+    color: #2C3E50;
+}
 
-    const message = document.getElementById("message");
-    if (isCorrect) {
-        message.innerHTML = "🎉 <strong>Congratulations! That is the correct answer!</strong><br>" +
-            "Elius is stirring and slowly opens his eyes...<br>" +
-            "He reaches down into the river with his giant hand and saves Galliae!<br>" +
-            "You complete your tour of the factory and are presented the golden key to the gates of the factory for life.";
-        message.classList.add("success");
-        message.classList.remove("error");
-    } else {
-        message.textContent = "❌ Incorrect answer!";
-        message.classList.add("error");
-        message.classList.remove("success");
-        inputs.forEach(input => input.value = "");
-    }
-});
+#noteInputs {
+    margin: 20px 0;
+}
 
-async function playNotes(notes) {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    for (let i = 0; i < notes.length; i++) {
-        let note = notes[i];
+.note-field {
+    width: 40px;
+    text-align: center;
+    font-size: 18px;
+    margin: 5px;
+    padding: 5px;
+    border: 2px solid #888;
+    border-radius: 5px;
+}
 
-        if (noteToMidi[note]) {
-            let osc = audioCtx.createOscillator();
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(
-                440 * Math.pow(2, (noteToMidi[note] - 69) / 12), 
-                audioCtx.currentTime
-            );
-            osc.connect(audioCtx.destination);
-            osc.start();
+button {
+    background-color: #3498DB;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-            // First 6 notes: quarter notes (500ms), Last 5 notes: half notes (1000ms)
-            let duration = i >= 6 ? 1000 : 500; 
-            
-            await new Promise(resolve => setTimeout(() => {
-                osc.stop();
-                resolve();
-            }, duration));
+button:hover {
+    background-color: #2980B9;
+}
 
-            await new Promise(resolve => setTimeout(resolve, 100)); // Pause between notes
-        } else {
-            await new Promise(resolve => setTimeout(resolve, 600)); // Skip invalid notes
-        }
-    }
+#message {
+    font-size: 20px;
+    font-weight: bold;
 }
