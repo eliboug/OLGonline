@@ -19,7 +19,10 @@ document.getElementById("playButton").addEventListener("click", () => {
 
     const message = document.getElementById("message");
     if (isCorrect) {
-        message.textContent = "✅ Correct! Elius awakens and saves Galliae!";
+        message.innerHTML = "🎉 <strong>Congratulations! That is the correct answer!</strong> <br>" +
+            "Elius is stirring and slowly opens his eyes... <br>" +
+            "He reaches down into the river with his giant hand and saves Galliae! <br>" +
+            "You complete your tour of the factory and are presented the golden key to the gates of the factory for life.";
         message.style.color = "green";
     } else {
         message.textContent = "❌ Incorrect answer!";
