@@ -31,16 +31,30 @@ document.getElementById("playButton").addEventListener("click", () => {
 async function playNotes(notes) {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
-    for (let note of notes) {
+    for (let i = 0; i < notes.length; i++) {
+        let note = notes[i];
+
         if (noteToMidi[note]) {
             let osc = audioCtx.createOscillator();
             osc.type = "sine";
-            osc.frequency.setValueAtTime(440 * Math.pow(2, (noteToMidi[note] - 69) / 12), audioCtx.currentTime);
+            osc.frequency.setValueAtTime(
+                440 * Math.pow(2, (noteToMidi[note] - 69) / 12), 
+                audioCtx.currentTime
+            );
             osc.connect(audioCtx.destination);
             osc.start();
-            await new Promise(resolve => setTimeout(() => { osc.stop(); resolve(); }, 500));
+
+            // First 6 notes: quarter notes (500ms), Last 5 notes: half notes (1000ms)
+            let duration = i >= 6 ? 1000 : 500; 
+            
+            await new Promise(resolve => setTimeout(() => {
+                osc.stop();
+                resolve();
+            }, duration));
+
+            await new Promise(resolve => setTimeout(resolve, 100)); // Pause between notes
         } else {
-            await new Promise(resolve => setTimeout(resolve, 600));
+            await new Promise(resolve => setTimeout(resolve, 600)); // Skip invalid notes
         }
     }
 }
